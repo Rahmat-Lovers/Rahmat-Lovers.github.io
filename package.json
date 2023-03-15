@@ -6,11 +6,13 @@
     "dev": "npx rollup -c -w",
     "start": "npx serve -l 3000 public",
     "build-tailwind": "tailwindcss -i ./public/css/raw.css -o ./public/css/tailwind.css",
-    "build-tailwind-watch": "tailwindcss -i ./public/css/raw.css -o ./public/css/tailwind.css --watch"
+    "build-tailwind-watch": "tailwindcss -i ./public/css/raw.css -o ./public/css/tailwind.css --watch",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^16.0.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
+    "gh-pages": "^5.0.0",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.0.0",
     "rollup-plugin-livereload": "^2.0.0",
