@@ -7,7 +7,8 @@
     "start": "npx serve -l 3000 public",
     "build-tailwind": "tailwindcss -i ./public/css/raw.css -o ./public/css/tailwind.css",
     "build-tailwind-watch": "tailwindcss -i ./public/css/raw.css -o ./public/css/tailwind.css --watch",
-    "deploy": "gh-pages -d dist"
+    "predeploy": "npm install && npm run build",
+    "deploy": "gh-pages -d public"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^16.0.0",
