@@ -1,3 +1,10 @@
 import { ethers } from "ethers";
 
-export default new ethers.providers.Web3Provider(window.ethereum)
+let exportValue
+try {
+    exportValue = new ethers.providers.Web3Provider(window.ethereum)
+} catch {
+    exportValue = 0
+}
+
+export default exportValue
