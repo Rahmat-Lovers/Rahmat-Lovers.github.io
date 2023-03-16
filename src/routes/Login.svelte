@@ -4,7 +4,7 @@
 
     const login = async () => {
         await provider.send("eth_requestAccounts", []);
-        await replace('/home')
+        await replace('/home/user')
     };
 </script>
 

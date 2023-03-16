@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "ethers": "5.7.2",
-    "svelte-spa-router": "^3.0.4"
+    "svelte-spa-router": "^3.0.4",
+    "sweetalert2": "^11.7.3"
   }
 }
