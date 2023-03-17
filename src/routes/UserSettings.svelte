@@ -2,13 +2,18 @@
     import provider from "../data/provider";
     import getContract from "../data/getContract";
     import Swal from "sweetalert2";
+    import flatpickr from "flatpickr";
 
     let loading = true;
     let canWdByAcceptor = true;
     let canWdByAtBalance = true;
     let canWdByAtTime = true;
+    let isSettedTargetBalance;
+    let isSettedTargetTime;
+    
 
     let targetSaldo ;
+    let targetTime;
 
     (async () => {
         const signer = await provider.getSigner();
@@ -16,7 +21,19 @@
         canWdByAcceptor = !(await contract.isAcceptorDisabled());
         canWdByAtTime = !(await contract.isUnlockAtTimeDisabled());
         canWdByAtBalance = !(await contract.isUnlockAtBalanceDisabled());
+
+        isSettedTargetBalance = await contract.isSettedTargetBalance();
+        isSettedTargetTime = await contract.isSettedTargetTime();
+
         loading = false;
+
+        flatpickr('#sekeren', {
+            enableTime: true,
+            time_24hr: true,
+            onChange: (data) => {
+                targetTime = Math.floor((new Date(data[0])).getTime() / 1000)
+            }
+        })
     })();
 
     const nonactiveWdByAcceptor = async () => {
@@ -183,7 +200,7 @@
             >
         {/if}
     </div>
-    {#if canWdByAtBalance}
+    {#if !isSettedTargetBalance && canWdByAtBalance}
         <div
             class="bg-blue-100 border border-blue-500 rounded p-2 text-white my-1"
         >
@@ -207,4 +224,24 @@
             >
         </div>
     {/if}
+    {#if !isSettedTargetTime && canWdByAtTime}
+    <div
+        class="bg-blue-100 border border-blue-500 rounded p-2 text-white my-1"
+    >
+        <p class="text-black">
+            Atur supaya saldo terkunci sampai tanggal tertentu
+        </p>
+        <!-- <div id="sekeren"></div> -->
+        <input type="text" id="sekeren">
+        <button
+            class="rounded p-1 bg-blue-500"
+            on:click={async () => {
+                const signer = await provider.getSigner();
+                const contract = await getContract(signer);
+
+                await contract.setTargetTime(parseInt(targetTime))
+            }}>Submit</button
+        >
+    </div>
+{/if}
 </div>

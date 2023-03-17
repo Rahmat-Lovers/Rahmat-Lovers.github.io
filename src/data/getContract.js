@@ -1,5 +1,5 @@
 import { ethers } from "ethers"
-const tokenAddress = "0x4EC08115C00994C4E707ea3358c0e12273493Fda";
+const tokenAddress = "0x0aeA442E59bab0BFd804d1c5F55d390119a713f6";
 const tokenAbi = [
   {
     "inputs": [
@@ -164,6 +164,45 @@ const tokenAbi = [
   {
     "inputs": [],
     "name": "isAcceptorDisabled",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isSettedAcceptor",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isSettedTargetBalance",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "isSettedTargetTime",
     "outputs": [
       {
         "internalType": "bool",
