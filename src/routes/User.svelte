@@ -3,7 +3,7 @@
 	import getContract from "../data/getContract";
 	import getUsdContract from "../data/getUsdContract";
 	import Swal from "sweetalert2";
-	import { replace } from "svelte-spa-router";
+	import { navigate } from "svelte-routing"
 	import axios from "axios";
 
 	let loading = true;
@@ -258,7 +258,7 @@
 	<div>
 		<button
 			on:click={async () => {
-				await replace("/home/user/settings");
+				await navigate("/home/user/settings");
 			}}
 			><svg
 				xmlns="http://www.w3.org/2000/svg"
