@@ -1,5 +1,5 @@
 import { ethers } from "ethers"
-const tokenAddress = "0x96F44692Bde3C1E7Bf0C369C6b6cf26Cd5636A0d";
+const tokenAddress = "0x4EC08115C00994C4E707ea3358c0e12273493Fda";
 const tokenAbi = [
   {
     "inputs": [
