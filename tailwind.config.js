@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     './public/index.html',
-    './src/routes/*.svelte',
+    './src/*/*.svelte',
   ],
   theme: {
     extend: {},

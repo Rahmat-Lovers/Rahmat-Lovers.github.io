@@ -1,4 +1,6 @@
 <script>
+    import Loading from "../components/Loading.svelte";
+
     import provider from "../data/provider";
     import getContract from "../data/getContract";
     import Swal from "sweetalert2";
@@ -10,10 +12,12 @@
     let canWdByAtTime = true;
     let isSettedTargetBalance;
     let isSettedTargetTime;
-    
+    let isSettedAcceptor;
 
-    let targetSaldo ;
+    let targetSaldo;
     let targetTime;
+
+    let acceptorAddress;
 
     (async () => {
         const signer = await provider.getSigner();
@@ -24,16 +28,17 @@
 
         isSettedTargetBalance = await contract.isSettedTargetBalance();
         isSettedTargetTime = await contract.isSettedTargetTime();
+        isSettedAcceptor = await contract.isSettedAcceptor();
 
         loading = false;
 
-        flatpickr('#sekeren', {
+        flatpickr("#sekeren", {
             enableTime: true,
             time_24hr: true,
             onChange: (data) => {
-                targetTime = Math.floor((new Date(data[0])).getTime() / 1000)
-            }
-        })
+                targetTime = Math.floor(new Date(data[0]).getTime() / 1000);
+            },
+        });
     })();
 
     const nonactiveWdByAcceptor = async () => {
@@ -146,14 +151,10 @@
 </script>
 
 {#if loading}
-    <div class="h-screen w-full fixed z-40 flex items-center bg-gray-200">
-        <div class="w-full text-center animate-bounce text-4xl">
-            <p>Loading</p>
-        </div>
-    </div>
+    <Loading />
 {/if}
 
-<div class="mt-2 mx-5">
+<div class="mx-5">
     <div class="flex border border-red-600 bg-red-100 p-3 rounded">
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -219,29 +220,90 @@
                     const signer = await provider.getSigner();
                     const contract = await getContract(signer);
 
-                    await contract.setTargetBalance(targetSaldo * 1_000_000)
+                    await contract.setTargetBalance(targetSaldo * 1_000_000);
                 }}>Submit</button
             >
         </div>
     {/if}
     {#if !isSettedTargetTime && canWdByAtTime}
-    <div
-        class="bg-blue-100 border border-blue-500 rounded p-2 text-white my-1"
-    >
-        <p class="text-black">
-            Atur supaya saldo terkunci sampai tanggal tertentu
-        </p>
-        <!-- <div id="sekeren"></div> -->
-        <input type="text" id="sekeren">
-        <button
-            class="rounded p-1 bg-blue-500"
-            on:click={async () => {
-                const signer = await provider.getSigner();
-                const contract = await getContract(signer);
-
-                await contract.setTargetTime(parseInt(targetTime))
-            }}>Submit</button
+        <div
+            class="bg-blue-100 border border-blue-500 rounded p-2 text-white my-1"
         >
-    </div>
-{/if}
+            <p class="text-black">
+                Atur supaya saldo terkunci sampai tanggal tertentu
+            </p>
+            <!-- <div id="sekeren"></div> -->
+            <input type="text" id="sekeren" />
+            <button
+                class="rounded p-1 bg-blue-500"
+                on:click={async () => {
+                    const signer = await provider.getSigner();
+                    const contract = await getContract(signer);
+
+                    await contract.setTargetTime(parseInt(targetTime));
+                }}>Submit</button
+            >
+        </div>
+    {/if}
+    {#if !isSettedAcceptor && canWdByAcceptor}
+        <div
+            class="bg-blue-100 border border-blue-500 rounded p-2 text-white my-1"
+        >
+            <p class="text-black">
+                Atur supaya saldo terkunci sampai di setujui oleh acceptor
+            </p>
+            <input
+                type="text"
+                placeholder="Masukan address acceptor"
+                bind:value={acceptorAddress}
+                class="text-black outline-none border border-blue-500 rounded w-1/2 py-1 px-2"
+            />
+            <button
+                class="rounded p-1 bg-blue-500"
+                on:click={async () => {
+                    if (!acceptorAddress) {
+                        Swal.fire("Input tidak boleh kosong");
+                        return;
+                    }
+
+                    const signer = await provider.getSigner();
+                    const contract = await getContract(signer);
+
+                    try {
+                        const name = await contract.getName(acceptorAddress);
+                        Swal.fire({
+                            icon: "info",
+                            text: `Apakah anda ingin mempercayakannya ke ${name}?`,
+                            showCancelButton: true,
+                            showConfirmButton: true,
+                        }).then(async (result) => {
+                            if (result.isConfirmed) {
+                                loading = true;
+                                try {
+                                    await (
+                                        await contract.setAcceptor(
+                                            acceptorAddress
+                                        )
+                                    ).wait();
+                                    isSettedAcceptor = true;
+                                } catch (err) {
+                                    Swal.fire({
+                                        icon: "error",
+                                        text: "Transaksi gagal",
+                                    });
+                                } finally {
+                                    loading = false;
+                                }
+                            }
+                        });
+                    } catch (err) {
+                        Swal.fire({
+                            icon: "error",
+                            text: "address tidak valid",
+                        });
+                    }
+                }}>Submit</button
+            >
+        </div>
+    {/if}
 </div>

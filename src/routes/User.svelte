@@ -1,9 +1,11 @@
 <script>
+	import Loading from "../components/Loading.svelte";
+
 	import provider from "../data/provider";
 	import getContract from "../data/getContract";
 	import getUsdContract from "../data/getUsdContract";
 	import Swal from "sweetalert2";
-	import { navigate } from "svelte-routing"
+	import { navigate } from "svelte-routing";
 	import axios from "axios";
 
 	let loading = true;
@@ -14,6 +16,9 @@
 	let avaxBalance = 0;
 
 	let targetBalance = 0;
+	let targetTime = 0;
+	let acceptor;
+	let acceptorName;
 
 	let canDeposit = false;
 	let canWithdraw;
@@ -37,7 +42,13 @@
 		avaxBalance =
 			parseFloat(await signer.getBalance()) / 1_000_000_000_000_000_000;
 
-		targetBalance = await contract.getTargetBalance();
+		targetBalance = (await contract.isUnlockAtBalanceDisabled())
+			? 0
+			: await contract.getTargetBalance();
+		acceptor = await contract.getAcceptor();
+		acceptorName = await contract.getName(acceptor);
+		targetTime = await contract.getTimeUnlocked();
+
 		canWithdraw = await contract.canWithdraw();
 		loading = false;
 	})();
@@ -226,15 +237,11 @@
 </script>
 
 {#if loading}
-	<div class="h-screen w-full fixed z-40 flex items-center bg-gray-200">
-		<div class="w-full text-center animate-bounce text-4xl">
-			<p>Loading</p>
-		</div>
-	</div>
+	<Loading />
 {/if}
 
 <div class="w-full h-12 mb-5 flex items-center px-5 justify-between">
-	<div class="flex">
+	<div class="flex mt-2">
 		<div class="w-12 h-12 bg-gray-700 rounded-full" />
 		<div class="ml-4">
 			<div class="flex items-center">
@@ -246,7 +253,12 @@
 				>
 			</div>
 			<p class="text-gray-400 text-xs md:text-base">
-				{address}
+				<span class="inline md:hidden">
+					{address.slice(0, 17)}...
+				</span>
+				<span class="hidden md:inline">
+					{address}
+				</span>
 				<button
 					on:click={() => {
 						navigator.clipboard.writeText(address);
@@ -351,7 +363,33 @@
 	<div class="mt-2">
 		{#if targetBalance > 0}
 			<div class="bg-blue-100 border border-blue-500 py-1 px-2 rounded">
-				<p>Anda bisa mencairkan saldo deposit saat sudah mencapai {targetBalance / 1_000_000} USD</p>
+				<p>
+					Anda bisa mencairkan saldo deposit saat sudah mencapai {targetBalance /
+						1_000_000} USD
+				</p>
+			</div>
+		{/if}
+	</div>
+
+	<div class="mt-2">
+		{#if acceptor != "0x0000000000000000000000000000000000000000"}
+			<div class="bg-blue-100 border border-blue-500 py-1 px-2 rounded">
+				<p>
+					Anda bisa mencairkan saldo deposit saat sudah disetujui oleh {acceptor}
+					({acceptorName})
+				</p>
+			</div>
+		{/if}
+	</div>
+
+	<div class="mt-2">
+		{#if targetTime > 0}
+			<div class="bg-blue-100 border border-blue-500 py-1 px-2 rounded">
+				<p>
+					Anda bisa mencairkan saldo deposit pada saat {new Date(
+						targetTime * 1000
+					).toLocaleString()}
+				</p>
 			</div>
 		{/if}
 	</div>
