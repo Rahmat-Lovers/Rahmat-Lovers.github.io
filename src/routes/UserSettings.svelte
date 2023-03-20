@@ -177,7 +177,7 @@
     </div>
 
     <div class="border border-red-600 bg-red-100 p-3 rounded mt-2">
-        {#if canWdByAcceptor}
+        {#if canWdByAcceptor && !isSettedAcceptor}
             <button
                 class="bg-red-500 hover:bg-red-400 rounded p-2 text-white w-full my-1"
                 on:click={nonactiveWdByAcceptor}
@@ -185,7 +185,7 @@
             >
         {/if}
 
-        {#if canWdByAtBalance}
+        {#if canWdByAtBalance && !isSettedTargetBalance}
             <button
                 class="bg-red-500 hover:bg-red-400 rounded p-2 text-white w-full my-1"
                 on:click={nonactiveWdAtBalance}
@@ -193,7 +193,7 @@
             >
         {/if}
 
-        {#if canWdByAtTime}
+        {#if canWdByAtTime && !isSettedTargetTime}
             <button
                 class="bg-red-500 hover:bg-red-400 rounded p-2 text-white w-full my-1"
                 on:click={nonactiveWdAtTime}
@@ -233,7 +233,7 @@
                 Atur supaya saldo terkunci sampai tanggal tertentu
             </p>
             <!-- <div id="sekeren"></div> -->
-            <input type="text" id="sekeren" />
+            <input type="text" class="text-black" id="sekeren" />
             <button
                 class="rounded p-1 bg-blue-500"
                 on:click={async () => {

@@ -4,7 +4,7 @@ let exportValue
 try {
     exportValue = new ethers.providers.Web3Provider(window.ethereum)
 } catch {
-    exportValue = 0
+    exportValue = {}
 }
 
 export default exportValue

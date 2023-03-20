@@ -1,6 +1,7 @@
 <script>
 	import { Router, Route } from "svelte-routing";
 	import Login from "./routes/Login.svelte";
+	import Index from "./routes/Index.svelte";
 	import User from "./routes/User.svelte";
 	import Acceptor from "./routes/Acceptor.svelte";
 	import UserSettings from "./routes/UserSettings.svelte";
@@ -16,7 +17,8 @@
 		<Route path="/home/user/settings" component={UserSettings} />
 		<Route path="/home/user" component={User} />
 		<Route path="/home/acceptor" component={Acceptor} />
-		<Route path="/" component={Login} />
+		<Route path="/login" component={Login} />
+		<Route path="/" component={Index} />
 		<Route path="*" component={NotFound} />
 	</Router>
 {:else}
